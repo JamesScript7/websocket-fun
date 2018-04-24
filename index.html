@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Web Sockets!</title>
+    <style>
+      body {
+        font-family: helvetica, sans-serif;
+        max-width: 300px;
+        text-align: center;
+      }
+      #recieved {
+        text-align: left;
+      }
+      ul {
+        padding: 10px 40px 10px 40px;
+      }
+      li {
+        list-style-type: none;
+        padding: 4px;
+        border-radius: 10px;
+      }
+      li:nth-child(odd) {
+        background-color: greenyellow;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Quik-chat</h1>
+    <div>
+      <div>
+        <ul id="recieved"></ul>
+      </div>
+      <form id="sendForm">
+        <input id="send" type="text" name="send" autocomplete="off" />
+        <button type="submit">send</button>
+      </form>
+    </div>
+    <script>
+      // HOSTS
+      // localhost:
+      // 'ws://localhost:8080'
+
+      // network (use ifconfig):
+      // 'ws://192.168.1.79:8080'
+      var ws = new WebSocket('ws://localhost:8080');
+      var send = document.getElementById('sendForm');
+      var inputField = document.getElementById('send');
+      var list = document.getElementById('recieved');
+
+      // When you achieve connection on the Server:
+      ws.onopen = function() {
+        console.log('WebSocket Started!');
+      }
+
+      // Send Message to the Server
+      send.addEventListener('submit', function(e) {
+        e.preventDefault();
+        ws.send(e.target.send.value);
+        inputField.value = null;
+      });
+
+      // Handle Server Response
+      ws.onmessage = function(e) {
+        var newLi = document.createElement('li');
+        var messageFromServer = e.data;
+        var node = document.createTextNode(messageFromServer);
+        newLi.appendChild(node);
+        list.appendChild(newLi);
+      }
+    </script>
+  </body>
+</html>
